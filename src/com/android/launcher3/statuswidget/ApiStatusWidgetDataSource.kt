@@ -116,8 +116,10 @@ class ApiStatusWidgetDataSource(context: Context) : StatusWidgetDataSource {
 
     private fun fetchLoyaltyInfo(): GetLoyaltyInfoResponse? = runBlocking {
         try {
-            apiClient.loyaltyService.GetLoyaltyInfo()
+            val response = apiClient.loyaltyService.GetLoyaltyInfo()
                 .execute(GetLoyaltyInfoRequest())
+            Log.d(TAG, "Loyalty info: balance=${response.balance}, quests=${response.quests.size}, rewards=${response.available_rewards.size}, offers=${response.available_offers.size}")
+            response
         } catch (e: Exception) {
             Log.w(TAG, "Failed to fetch loyalty info", e)
             null

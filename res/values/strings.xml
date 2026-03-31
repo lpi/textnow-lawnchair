@@ -501,7 +501,6 @@
     <!-- Content description for install app icon -->
     <string name="ps_add_button_content_description">Install apps to Private Space</string>
     <string name="sponsored_apps_folder_title">Sponsored apps</string>
-    <string name="sponsored_spotify_title">Spotify</string>
-    <string name="sponsored_netflix_title">Netflix</string>
-    <string name="sponsored_uber_title">Uber</string>
+    <string name="sponsored_iheartradio_title">iHeartRadio</string>
+    <string name="sponsored_accuweather_title">AccuWeather</string>
 </resources>

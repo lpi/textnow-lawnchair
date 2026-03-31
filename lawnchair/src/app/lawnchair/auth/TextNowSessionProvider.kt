@@ -7,7 +7,17 @@ object TextNowSessionProvider {
 
     private const val TAG = "TextNowSessionProvider"
 
+    // Debug override: set to a valid TextNow session ID to bypass the content provider.
+    // Obtain one by calling GET https://www.textnow.com/api/{username}/session with a
+    // connect.sid cookie — the response "id" field is the session ID.
+    private val DEBUG_SESSION_ID: String? = null
+
     fun getSession(context: Context): TextNowSession? {
+        DEBUG_SESSION_ID?.let {
+            Log.d(TAG, "Using debug session override")
+            return TextNowSession(sessionId = it, username = "debug", guid = "debug")
+        }
+
         return try {
             val bundle = context.contentResolver.call(
                 TextNowSessionContract.CONTENT_URI,

@@ -20,19 +20,14 @@ public class DemoSponsoredAppsDataSource implements SponsoredAppsDataSource {
                 context.getString(R.string.sponsored_apps_folder_title),
                 Arrays.asList(
                         new SponsoredAppSpec(
-                                context.getString(R.string.sponsored_spotify_title),
-                                "com.spotify.music",
-                                "https://play.google.com/store/apps/details?id=com.spotify.music",
-                                R.drawable.ic_sponsored_spotify),
+                                context.getString(R.string.sponsored_iheartradio_title),
+                                "com.clearchannel.iheartradio.controller",
+                                "https://play.google.com/store/apps/details?id=com.clearchannel.iheartradio.controller",
+                                R.drawable.ic_sponsored_iheartradio),
                         new SponsoredAppSpec(
-                                context.getString(R.string.sponsored_netflix_title),
-                                "com.netflix.mediaclient",
-                                "https://play.google.com/store/apps/details?id=com.netflix.mediaclient",
-                                R.drawable.ic_sponsored_netflix),
-                        new SponsoredAppSpec(
-                                context.getString(R.string.sponsored_uber_title),
-                                "com.ubercab",
-                                "https://play.google.com/store/apps/details?id=com.ubercab",
-                                R.drawable.ic_sponsored_uber)));
+                                context.getString(R.string.sponsored_accuweather_title),
+                                "com.accuweather.android",
+                                "https://play.google.com/store/apps/details?id=com.accuweather.android",
+                                R.drawable.ic_sponsored_accuweather)));
     }
 }
