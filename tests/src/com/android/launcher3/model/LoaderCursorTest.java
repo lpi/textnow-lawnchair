@@ -31,6 +31,7 @@ import static com.android.launcher3.LauncherSettings.Favorites.INTENT;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
 import static com.android.launcher3.LauncherSettings.Favorites.OPTIONS;
 import static com.android.launcher3.LauncherSettings.Favorites.PROFILE_ID;
 import static com.android.launcher3.LauncherSettings.Favorites.RANK;
@@ -47,6 +48,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -167,6 +169,24 @@ public class LoaderCursorTest {
         assertTrue(mApp.getIconCache().isDefaultIcon(info.bitmap, info.user));
         assertEquals("my-shortcut", info.title);
         assertEquals(ITEM_TYPE_DEEP_SHORTCUT, info.itemType);
+    }
+
+    @Test
+    public void createIconRequestInfo_shortcutIncludesIconBlob() {
+        byte[] iconBlob = new byte[] {1, 2, 3};
+        mCursor.newRow()
+                .add(_ID, 1)
+                .add(PROFILE_ID, 0)
+                .add(ITEM_TYPE, ITEM_TYPE_SHORTCUT)
+                .add(TITLE, "shortcut")
+                .add(CONTAINER, CONTAINER_DESKTOP)
+                .add(ICON, iconBlob);
+        assertTrue(mLoaderCursor.moveToNext());
+
+        WorkspaceItemInfo info = new WorkspaceItemInfo();
+        assertArrayEquals(
+                iconBlob,
+                mLoaderCursor.createIconRequestInfo(info, false /* useLowResIcon */).iconBlob);
     }
 
     @Test

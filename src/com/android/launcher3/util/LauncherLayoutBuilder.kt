@@ -32,6 +32,7 @@ import com.android.launcher3.AutoInstallsLayout.ATTR_Y
 import com.android.launcher3.AutoInstallsLayout.TAG_APPWIDGET
 import com.android.launcher3.AutoInstallsLayout.TAG_AUTO_INSTALL
 import com.android.launcher3.AutoInstallsLayout.TAG_FOLDER
+import com.android.launcher3.AutoInstallsLayout.TAG_SPONSORED_FOLDER
 import com.android.launcher3.AutoInstallsLayout.TAG_SHORTCUT
 import com.android.launcher3.AutoInstallsLayout.TAG_WORKSPACE
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
@@ -122,6 +123,8 @@ class LauncherLayoutBuilder {
         fun putFolder(titleResId: Int) = putFolder(ATTR_TITLE, titleResId.toString())
 
         fun putFolder(title: String?) = putFolder(ATTR_TITLE_TEXT, title)
+
+        fun putSponsoredFolder() = addItem(TAG_SPONSORED_FOLDER, null, emptyMap())
 
         protected open fun addItem(
             tag: String,

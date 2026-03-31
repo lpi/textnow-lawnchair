@@ -518,6 +518,7 @@ public class LauncherPreviewRenderer extends ContextWrapper
         for (ItemInfo itemInfo : currentWorkspaceItems) {
             switch (itemInfo.itemType) {
                 case Favorites.ITEM_TYPE_APPLICATION:
+                case Favorites.ITEM_TYPE_SHORTCUT:
                 case Favorites.ITEM_TYPE_DEEP_SHORTCUT:
                     inflateAndAddIcon((WorkspaceItemInfo) itemInfo);
                     break;

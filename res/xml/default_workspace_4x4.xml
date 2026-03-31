@@ -84,4 +84,9 @@
         <favorite launcher:uri="market://details?id=com.android.launcher" />
     </resolve>
 
+    <sponsored-folder
+        launcher:screen="0"
+        launcher:x="1"
+        launcher:y="0" />
+
 </favorites>

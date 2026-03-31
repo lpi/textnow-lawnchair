@@ -44,6 +44,7 @@ import com.android.launcher3.model.data.WorkspaceItemInfo
 import com.android.launcher3.pm.PackageInstallInfo
 import com.android.launcher3.pm.UserCache
 import com.android.launcher3.shortcuts.ShortcutKey
+import com.android.launcher3.sponsored.SponsoredAppUtils
 import com.android.launcher3.util.ApiWrapper
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.PackageManagerHelper
@@ -103,6 +104,7 @@ class WorkspaceItemProcessor(
             }
             when (c.itemType) {
                 Favorites.ITEM_TYPE_APPLICATION,
+                Favorites.ITEM_TYPE_SHORTCUT,
                 Favorites.ITEM_TYPE_DEEP_SHORTCUT -> processAppOrDeepShortcut()
                 Favorites.ITEM_TYPE_FOLDER,
                 Favorites.ITEM_TYPE_APP_PAIR -> processFolderOrAppPair()
@@ -148,7 +150,11 @@ class WorkspaceItemProcessor(
                 WorkspaceItemInfo.FLAG_DISABLED_QUIET_USER
             else 0
         val cn = intent.component
-        val targetPkg = cn?.packageName ?: intent.getPackage()
+        val isSponsoredShortcut = SponsoredAppUtils.isSponsoredApp(c.itemType, c.options)
+        val targetPkg =
+            cn?.packageName
+                ?: intent.getPackage()
+                ?: if (isSponsoredShortcut) SponsoredAppUtils.getTargetPackage(intent) else null
         if (targetPkg.isNullOrEmpty()) {
             c.markDeleted("No target package for item id=${c.id}", RestoreError.MISSING_INFO)
             return
@@ -184,7 +190,7 @@ class WorkspaceItemProcessor(
                 }
             }
         }
-        if (intent.`package` == null) {
+        if (!isSponsoredShortcut && intent.`package` == null) {
             intent.`package` = targetPkg
         }
         // else if cn == null => can't infer much, leave it
@@ -194,6 +200,9 @@ class WorkspaceItemProcessor(
                 // Points to a valid app (superset of cn != null) but the apk
                 // is not available.
                 when {
+                    isSponsoredShortcut -> {
+                        allowMissingTarget = true
+                    }
                     c.restoreFlag != 0 -> {
                         // Package is not yet available but might be
                         // installed later.

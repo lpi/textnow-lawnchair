@@ -34,6 +34,7 @@ import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.content.res.XmlResourceParser;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Process;
 import android.os.UserHandle;
@@ -44,10 +45,14 @@ import android.util.Log;
 import android.util.Xml;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.annotation.WorkerThread;
 import androidx.annotation.XmlRes;
 
+import com.android.launcher3.icons.BitmapInfo;
+import com.android.launcher3.icons.GraphicsUtils;
+import com.android.launcher3.icons.LauncherIcons;
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
@@ -55,6 +60,10 @@ import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.qsb.QsbContainerView;
 import com.android.launcher3.shortcuts.ShortcutKey;
+import com.android.launcher3.sponsored.SponsoredAppSpec;
+import com.android.launcher3.sponsored.SponsoredAppUtils;
+import com.android.launcher3.sponsored.SponsoredAppsRepository;
+import com.android.launcher3.sponsored.SponsoredFolderSpec;
 import com.android.launcher3.util.ApiWrapper;
 import com.android.launcher3.util.IntArray;
 import com.android.launcher3.util.Partner;
@@ -134,6 +143,7 @@ public class AutoInstallsLayout {
     private static final String TAG_APP_ICON = "appicon";
     public static final String TAG_AUTO_INSTALL = "autoinstall";
     public static final String TAG_FOLDER = "folder";
+    public static final String TAG_SPONSORED_FOLDER = "sponsored-folder";
     public static final String TAG_APPWIDGET = "appwidget";
     protected static final String TAG_SEARCH_WIDGET = "searchwidget";
     public static final String TAG_SHORTCUT = "shortcut";
@@ -351,6 +361,23 @@ public class AutoInstallsLayout {
         }
     }
 
+    protected void putIcon(@Nullable BitmapInfo bitmapInfo) {
+        if (bitmapInfo != null) {
+            mValues.put(Favorites.ICON, GraphicsUtils.flattenBitmap(bitmapInfo.icon));
+        }
+    }
+
+    @Nullable
+    protected BitmapInfo getBitmapInfo(@DrawableRes int iconRes) {
+        Drawable drawable = mContext.getDrawable(iconRes);
+        if (drawable == null) {
+            return null;
+        }
+        try (LauncherIcons launcherIcons = LauncherIcons.obtain(mContext)) {
+            return launcherIcons.createBadgedIconBitmap(drawable);
+        }
+    }
+
     protected ArrayMap<String, TagParser> getFolderElementsMap() {
         ArrayMap<String, TagParser> parsers = new ArrayMap<>();
         parsers.put(TAG_APP_ICON, new AppShortcutParser());
@@ -364,6 +391,7 @@ public class AutoInstallsLayout {
         parsers.put(TAG_APP_ICON, new AppShortcutParser());
         parsers.put(TAG_AUTO_INSTALL, new AutoInstallParser());
         parsers.put(TAG_FOLDER, new FolderParser());
+        parsers.put(TAG_SPONSORED_FOLDER, new SponsoredFolderParser());
         parsers.put(TAG_APPWIDGET, new PendingWidgetParser());
         parsers.put(TAG_SEARCH_WIDGET, new SearchWidgetParser());
         parsers.put(TAG_SHORTCUT, new ShortcutParser());
@@ -660,6 +688,66 @@ public class AutoInstallsLayout {
                     addedId = folderItems.get(0);
                     mDb.update(TABLE_NAME, childValues,
                             Favorites._ID + "=" + addedId, null);
+                }
+            }
+            return addedId;
+        }
+    }
+
+    protected class SponsoredFolderParser implements TagParser {
+
+        @Override
+        public int parseAndAdd(XmlPullParser parser) {
+            SponsoredFolderSpec folderSpec = SponsoredAppsRepository.getSponsoredFolderSpec(mContext);
+            if (folderSpec.getApps().size() < 2) {
+                Log.w(TAG, "Skipping sponsored folder with fewer than two apps");
+                return -1;
+            }
+
+            mValues.put(Favorites.TITLE, folderSpec.getTitle());
+            mValues.put(Favorites.ITEM_TYPE, Favorites.ITEM_TYPE_FOLDER);
+            mValues.put(Favorites.SPANX, 1);
+            mValues.put(Favorites.SPANY, 1);
+            mValues.put(Favorites._ID, mCallback.generateNewItemId());
+            int folderId = mCallback.insertAndCheck(mDb, mValues);
+            if (folderId < 0) {
+                Log.e(TAG, "Unable to add sponsored folder");
+                return -1;
+            }
+
+            final ContentValues folderValues = new ContentValues(mValues);
+            IntArray folderItems = new IntArray();
+            int rank = 0;
+            for (SponsoredAppSpec app : folderSpec.getApps()) {
+                mValues.clear();
+                mValues.put(Favorites.CONTAINER, folderId);
+                mValues.put(Favorites.RANK, rank);
+                mValues.put(Favorites.OPTIONS, WorkspaceItemInfo.FLAG_SPONSORED_APP);
+                putIcon(getBitmapInfo(app.getIconRes()));
+                int id = addShortcut(
+                        app.getTitle(),
+                        SponsoredAppUtils.createIntent(app.getPackageName(), app.getFallbackUrl()),
+                        Favorites.ITEM_TYPE_SHORTCUT);
+                if (id >= 0) {
+                    folderItems.add(id);
+                    rank++;
+                }
+            }
+
+            int addedId = folderId;
+            if (folderItems.size() < 2) {
+                mDb.delete(TABLE_NAME, itemIdMatch(folderId), null);
+                addedId = -1;
+
+                if (folderItems.size() == 1) {
+                    final ContentValues childValues = new ContentValues();
+                    copyInteger(folderValues, childValues, Favorites.CONTAINER);
+                    copyInteger(folderValues, childValues, Favorites.SCREEN);
+                    copyInteger(folderValues, childValues, Favorites.CELLX);
+                    copyInteger(folderValues, childValues, Favorites.CELLY);
+
+                    addedId = folderItems.get(0);
+                    mDb.update(TABLE_NAME, childValues, Favorites._ID + "=" + addedId, null);
                 }
             }
             return addedId;

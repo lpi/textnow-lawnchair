@@ -72,4 +72,10 @@
         launcher:spanY="2"
         launcher:x="0"
         launcher:y="3"/>
+
+    <sponsored-folder
+        launcher:screen="0"
+        launcher:x="2"
+        launcher:y="0" />
+
 </favorites>

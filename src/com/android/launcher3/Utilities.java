@@ -243,6 +243,9 @@ public final class Utilities {
             }
             outObj[0] = icon;
             return icon;
+        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT
+                && info instanceof ItemInfoWithIcon) {
+            return ((ItemInfoWithIcon) info).bitmap.newIcon(context);
         } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SEARCH_ACTION
                 && info instanceof ItemInfoWithIcon) {
             return ((ItemInfoWithIcon) info).bitmap.newIcon(context);
@@ -762,6 +765,9 @@ public final class Utilities {
             }
             mainIcon = icon;
             badge = icon.getBadge();
+        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT
+                && info instanceof ItemInfoWithIcon) {
+            mainIcon = ((ItemInfoWithIcon) info).newIcon(context, useTheme);
         }
 
         if (useTheme && mainIcon instanceof BitmapInfo.Extender) {

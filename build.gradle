@@ -16,6 +16,7 @@ plugins {
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.google.protobuf)
     alias(libs.plugins.cash.licensee)
+    alias(libs.plugins.cash.wire)
     alias(libs.plugins.rikka.refine)
     alias(libs.plugins.diffplug.spotless)
 }
@@ -154,11 +155,13 @@ final def quickstepMaxSdk = "35"
 
 android {
     namespace "com.android.launcher3"
+    testNamespace "com.android.launcher3.tests"
     defaultConfig {
         // Lawnchair Launcher 15.0 Beta 2.1
         // See CONTRIBUTING.md#versioning-scheme
         versionCode 15_00_02_02_01
         versionName "${versionDisplayName}"
+        testInstrumentationRunner "com.android.launcher3.tests.LauncherAndroidTestRunner"
         buildConfigField "String", "VERSION_DISPLAY_NAME", "\"${versionDisplayName}\""
         buildConfigField "String", "MAJOR_VERSION", "\"${majorVersion}\""
         buildConfigField "String", "COMMIT_HASH", "\"${buildCommit}\""
@@ -346,6 +349,26 @@ android {
             java.srcDirs = ['quickstep/src', 'quickstep/recents_ui_overrides/src']
             manifest.srcFile "quickstep/AndroidManifest.xml"
         }
+
+        androidTest {
+            manifest.srcFile 'tests/AndroidManifest-gradle.xml'
+            res.srcDirs = ['tests/res']
+            assets.srcDirs = ['tests/assets']
+            java.srcDirs = ['tests/gradleAndroidTest/src']
+        }
+    }
+}
+
+wire {
+    kotlin {
+        rpcCallStyle = "suspending"
+        rpcRole = "client"
+        singleMethodServices = false
+        javaInterop = false
+
+        sourcePath {
+            srcDir("lawnchair/wire-protos")
+        }
     }
 }
 
@@ -357,6 +380,14 @@ composeCompiler {
 }
 
 addFrameworkJar('framework-15.jar')
+
+def androidTestOptionalJar = [
+    "platforms/android-36.1/optional/android.test.mock.jar",
+    "platforms/android-36/optional/android.test.mock.jar",
+    "platforms/android-35/optional/android.test.mock.jar",
+]
+    .collect { new File(android.sdkDirectory, it) }
+    .find { it.exists() }
 
 dependencies {
     implementation projects.iconloaderlib
@@ -403,6 +434,18 @@ dependencies {
     implementation libs.chickenhook.restrictionbypass
     implementation libs.rikka.refine.runtime
 
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.uiautomator
+    androidTestImplementation libs.mockito.android
+    androidTestImplementation libs.mockito.kotlin
+    androidTestImplementation libs.truth
+    if (androidTestOptionalJar != null) {
+        androidTestImplementation files(androidTestOptionalJar)
+    }
+
     implementation platform(libs.compose.bom)
     implementation libs.compose.ui
     implementation libs.compose.ui.util
@@ -431,6 +474,7 @@ dependencies {
     implementation libs.androidx.datastore.preferences
 
     implementation libs.bundles.retrofit
+    implementation libs.bundles.wire
 
     implementation libs.bundles.room
     ksp libs.room.compiler

@@ -24,6 +24,7 @@ import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APP_PAIR;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
 import static com.android.launcher3.LauncherState.EDIT_MODE;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.compat.AccessibilityManagerCompat.sendCustomAccessibilityEvent;
@@ -197,6 +198,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
      */
     public static boolean willAcceptItemType(int itemType) {
         return itemType == ITEM_TYPE_APPLICATION
+                || itemType == ITEM_TYPE_SHORTCUT
                 || itemType == ITEM_TYPE_DEEP_SHORTCUT
                 || itemType == ITEM_TYPE_APP_PAIR;
     }

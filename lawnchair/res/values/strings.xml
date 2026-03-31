@@ -464,6 +464,19 @@
     <string name="smartspace_mode_google">Google</string>
     <string name="smartspace_mode_google_search">Google Search</string>
     <string name="smartspace_mode_smartspacer" translatable="false">Smartspacer</string>
+    <string name="smartspace_mode_textnow_status">TextNow Status</string>
+
+    <!-- TextNow Status Widget strings -->
+    <string name="textnow_status_header">TextNow</string>
+    <string name="textnow_status_data_remaining">%1$s of %2$s remaining</string>
+    <string name="textnow_status_points_label">%,d pts</string>
+    <string name="textnow_status_offers_label">%d offers</string>
+    <string name="textnow_status_offers_title">Available Offers</string>
+    <string name="textnow_quests_title">Quests</string>
+    <string name="textnow_rewards_title">Rewards</string>
+    <string name="textnow_quest_points">+%,d pts</string>
+    <string name="textnow_quest_ready">Ready to complete!</string>
+    <string name="textnow_reward_cost">%,d pts</string>
 
     <!-- Miscellaneous Smartspace strings -->
     <string name="smartspace_media_info_separator">" — "</string>

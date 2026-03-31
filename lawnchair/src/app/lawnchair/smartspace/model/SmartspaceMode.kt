@@ -16,6 +16,7 @@ sealed class SmartspaceMode(
             "google" -> GoogleSmartspace
             "google_search" -> GoogleSearchSmartspace
             "smartspacer" -> Smartspacer
+            "textnow_status" -> TextNowStatus
             else -> LawnchairSmartspace
         }
 
@@ -27,6 +28,7 @@ sealed class SmartspaceMode(
             GoogleSmartspace,
             GoogleSearchSmartspace,
             Smartspacer,
+            TextNowStatus,
         )
     }
 
@@ -70,4 +72,12 @@ object Smartspacer : SmartspaceMode(
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
             context.packageManager.isPackageInstalledAndEnabled("com.kieronquinn.app.smartspacer")
     }
+}
+
+object TextNowStatus : SmartspaceMode(
+    nameResourceId = R.string.smartspace_mode_textnow_status,
+    layoutResourceId = R.layout.textnow_status_widget,
+) {
+    override fun toString(): String = "textnow_status"
+    override fun isAvailable(context: Context): Boolean = true
 }

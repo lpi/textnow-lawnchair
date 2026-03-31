@@ -32,17 +32,22 @@ import com.android.launcher3.LauncherSettings.Favorites.APPWIDGET_PROVIDER
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT
+import com.android.launcher3.LauncherSettings.Favorites.ICON
 import com.android.launcher3.LauncherSettings.Favorites.INTENT
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_FOLDER
+import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT
+import com.android.launcher3.LauncherSettings.Favorites.OPTIONS
 import com.android.launcher3.LauncherSettings.Favorites.PROFILE_ID
 import com.android.launcher3.LauncherSettings.Favorites.SPANX
 import com.android.launcher3.LauncherSettings.Favorites.SPANY
 import com.android.launcher3.LauncherSettings.Favorites._ID
 import com.android.launcher3.model.data.AppInfo
+import com.android.launcher3.model.data.WorkspaceItemInfo
 import com.android.launcher3.pm.UserCache
+import com.android.launcher3.sponsored.SponsoredAppsRepository
 import com.android.launcher3.util.ApiWrapper
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.LauncherLayoutBuilder
@@ -157,6 +162,24 @@ class AutoInstallsLayoutTest {
         assertThat(callback.items[1][CONTAINER]).isEqualTo(folderId)
         assertThat(callback.items[2][CONTAINER]).isEqualTo(folderId)
         assertThat(callback.items[3][CONTAINER]).isEqualTo(folderId)
+    }
+
+    @Test
+    fun sponsored_folder_added_with_branded_shortcuts() {
+        val appCount = SponsoredAppsRepository.getSponsoredFolderSpec(targetContext).apps.size
+
+        LauncherLayoutBuilder().atWorkspace(1, 1, 0).putSponsoredFolder().toAutoInstallsLayout().loadLayout(db)
+
+        assertThat(callback.items.size).isEqualTo(1 + appCount)
+        assertThat(callback.items[0][ITEM_TYPE]).isEqualTo(ITEM_TYPE_FOLDER)
+
+        val folderId = callback.items[0].getAsInteger(_ID)
+        callback.items.drop(1).forEach { child ->
+            assertThat(child[ITEM_TYPE]).isEqualTo(ITEM_TYPE_SHORTCUT)
+            assertThat(child[CONTAINER]).isEqualTo(folderId)
+            assertThat(child[OPTIONS]).isEqualTo(WorkspaceItemInfo.FLAG_SPONSORED_APP)
+            assertThat(child.getAsByteArray(ICON)).isNotNull()
+        }
     }
 
     @Test

@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package textnow.api.loyalty.v1;
+
+option java_package = "me.textnow.api.loyalty.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+service LoyaltyService {
+    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+    rpc GetLoyaltyInfo(GetLoyaltyInfoRequest) returns (GetLoyaltyInfoResponse);
+}
+
+message GetBalanceRequest {}
+
+message GetBalanceResponse {
+    int64 balance = 1;
+}
+
+message GetLoyaltyInfoRequest {}
+
+message GetLoyaltyInfoResponse {
+    int64 balance = 1;
+    repeated AvailableReward available_rewards = 3;
+    repeated Quest quests = 4;
+    UserMetadata user_metadata = 5;
+    repeated AvailableOffer available_offers = 6;
+}
+
+message AvailableReward {
+    string reward_id = 1;
+    RewardItem reward_item = 2;
+    RewardDuration duration = 3;
+    int64 points = 4;
+    google.protobuf.Timestamp expires_at = 5;
+    bool disabled = 6;
+}
+
+message AvailableOffer {
+    string offer_id = 1;
+    string image_url = 2;
+    string title = 3;
+    string subtitle = 4;
+    string button_title = 5;
+    string action_url = 6;
+    int64 points_per_spend = 7;
+    int64 spend_amount_dollars = 8;
+}
+
+message Quest {
+    string quest_id = 1;
+    int64 points = 2;
+    google.protobuf.Timestamp ends_at = 3;
+    QuestStatus status = 4;
+    repeated CompletionAction actions = 5;
+    string title = 6;
+    string description = 7;
+    string image_url = 8;
+    string label = 9;
+}
+
+message CompletionAction {
+    QuestAction action = 1;
+    int64 count = 2;
+    int64 target = 3;
+}
+
+message UserMetadata {
+    OptInStatus opt_in_status = 1;
+}
+
+enum OptInStatus {
+    OPT_IN_STATUS_UNKNOWN = 0;
+    OPT_IN_STATUS_OPTED_IN = 1;
+    OPT_IN_STATUS_OPTED_OUT = 2;
+}
+
+enum QuestStatus {
+    QUEST_STATUS_UNKNOWN = 0;
+    QUEST_STATUS_IN_PROGRESS = 1;
+    QUEST_STATUS_READY_FOR_COMPLETION = 2;
+    QUEST_STATUS_COMPLETED = 3;
+}
+
+enum QuestAction {
+    QUEST_ACTION_UNKNOWN = 0;
+    QUEST_ACTION_CURRENT_FINANCIAL_SIGNUP = 1;
+    QUEST_ACTION_COMPLETE_USER_PROFILE = 2;
+    QUEST_ACTION_ENABLE_LOCATION_SHARING = 3;
+    QUEST_ACTION_PROVIDE_FORWORD_CONSENT = 4;
+    QUEST_ACTION_SEND_EMOJI_REACTION = 5;
+    QUEST_ACTION_SEND_TEXT_MESSAGE = 6;
+    QUEST_ACTION_MAKE_OUTBOUND_CALL = 7;
+    QUEST_ACTION_PURCHASE_LOCK_IN_NUMBER = 8;
+    QUEST_ACTION_PURCHASE_ADFREE_PLUS = 9;
+    QUEST_ACTION_SET_VOICEMAIL_GREETING = 10;
+    QUEST_ACTION_LOYALTY_OPT_IN = 11;
+    QUEST_ACTION_GAMES_LEVEL_WON = 13;
+    QUEST_ACTION_GAMES_LEVEL_LOST = 14;
+    QUEST_ACTION_APP_OPENED = 15;
+    QUEST_ACTION_SHARE_NUMBER_VIA_TEXT = 16;
+    QUEST_ACTION_MAKE_GROUP_CHAT = 17;
+    QUEST_ACTION_ACTIVATE_SIM_CARD = 18;
+    QUEST_ACTION_ALLOW_CONTACTS_PERMISSION = 19;
+    QUEST_ACTION_PURCHASE_DATA_PASS = 20;
+    QUEST_ACTION_LOYALTY_PURCHASE = 21;
+    QUEST_ACTION_IAP_CONSUMABLE_PURCHASE = 22;
+    QUEST_ACTION_IAP_SUBSCRIPTION_PURCHASE = 23;
+    QUEST_ACTION_WATCH_REWARDED_VIDEO = 24;
+    QUEST_ACTION_PURCHASE_APP_ICON = 25;
+    QUEST_ACTION_PURCHASE_VERIFICATION_CODE = 26;
+    QUEST_ACTION_SEND_GROUP_MESSAGE = 27;
+    QUEST_ACTION_SET_DEFAULT_APP = 28;
+    QUEST_ACTION_RECEIVE_VERIFICATION_CODE = 29;
+}
+
+enum RewardItem {
+    REWARD_ITEM_UNKNOWN = 0;
+    REWARD_ITEM_APP_ICON_MINIMALIST = 1;
+    REWARD_ITEM_LOCK_IN_NUMBER = 2;
+    REWARD_ITEM_APP_ICON_EYE_CANDY_PURPLE = 3;
+    REWARD_ITEM_APP_ICON_EYE_CANDY_IOS = 4;
+    REWARD_ITEM_APP_ICON_EYE_CANDY_AQUA = 5;
+    REWARD_ITEM_APP_ICON_TIGER = 6;
+    REWARD_ITEM_APP_ICON_PINK_CAMO = 7;
+    REWARD_ITEM_APP_ICON_GREEN_CAMO = 8;
+    REWARD_ITEM_APP_ICON_PRIDE = 9;
+    REWARD_ITEM_APP_ICON_VINTAGE_TEXTNOW = 10;
+    REWARD_ITEM_APP_ICON_ALL_HANDS_2025 = 11;
+    REWARD_ITEM_SIM_CARD = 12;
+    REWARD_ITEM_ADFREE_PLUS = 13;
+    REWARD_ITEM_VERIFICATION_CODE = 14;
+    REWARD_ITEM_APP_ICON_4TH_OF_JULY_2025 = 15;
+    REWARD_ITEM_HOUR_BROWSE_PASS = 16;
+    REWARD_ITEM_APP_ICON_HALLOWEEN = 17;
+    REWARD_ITEM_VOICEMAIL_TRANSCRIPTION = 18;
+    REWARD_ITEM_SHOW_CALLER = 19;
+    REWARD_ITEM_APP_ICON_WINTER = 20;
+    REWARD_ITEM_APP_ICON_SPRING_BLOOM = 21;
+}
+
+enum RewardDuration {
+    REWARD_DURATION_UNKNOWN = 0;
+    REWARD_DURATION_PERMANENT = 1;
+    REWARD_DURATION_1_MONTH = 2;
+    REWARD_DURATION_1_WEEK = 3;
+    REWARD_DURATION_SINGLE_USE = 4;
+    REWARD_DURATION_1_HOUR = 5;
+    REWARD_DURATION_1_DAY = 6;
+    REWARD_DURATION_30_MINUTES = 7;
+}

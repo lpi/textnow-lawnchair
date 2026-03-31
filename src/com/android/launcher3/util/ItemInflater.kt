@@ -56,6 +56,7 @@ class ItemInflater<T>(
         val parent = nullableParent ?: defaultParent
         when (item.itemType) {
             Favorites.ITEM_TYPE_APPLICATION,
+            Favorites.ITEM_TYPE_SHORTCUT,
             Favorites.ITEM_TYPE_DEEP_SHORTCUT,
             Favorites.ITEM_TYPE_SEARCH_ACTION -> {
                 var info =

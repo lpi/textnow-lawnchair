@@ -76,4 +76,9 @@
         <favorite launcher:uri="#Intent;action=android.intent.action.CAMERA_BUTTON;end" />
     </resolve>
 
+    <sponsored-folder
+        launcher:screen="0"
+        launcher:x="2"
+        launcher:y="0" />
+
 </favorites>

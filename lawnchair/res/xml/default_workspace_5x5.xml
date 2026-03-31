@@ -118,6 +118,11 @@
         <favorite launcher:uri="market://details?id=com.android.launcher" />
     </resolve>
 
+    <sponsored-folder
+        launcher:screen="0"
+        launcher:x="2"
+        launcher:y="4" />
+
     <!-- Screen 1 -->
 
     <resolve

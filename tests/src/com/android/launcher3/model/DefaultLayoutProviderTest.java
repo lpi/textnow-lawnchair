@@ -34,6 +34,8 @@ import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.model.data.FolderInfo;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.WorkspaceItemInfo;
+import com.android.launcher3.sponsored.SponsoredAppsRepository;
 import com.android.launcher3.util.LauncherLayoutBuilder;
 import com.android.launcher3.util.LauncherModelHelper;
 
@@ -159,6 +161,22 @@ public class DefaultLayoutProviderTest {
         // Verify last icon
         assertEquals(LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT,
                 info.getContents().get(info.getContents().size() - 1).itemType);
+    }
+
+    @Test
+    public void testCustomProfileLoaded_with_sponsored_folder() throws Exception {
+        writeLayoutAndLoad(new LauncherLayoutBuilder().atWorkspace(0, 0, 0).putSponsoredFolder());
+
+        assertEquals(1, mModelHelper.getBgDataModel().workspaceItems.size());
+        FolderInfo info = (FolderInfo) mModelHelper.getBgDataModel().workspaceItems.get(0);
+        assertEquals(LauncherSettings.Favorites.ITEM_TYPE_FOLDER, info.itemType);
+        assertEquals(
+                SponsoredAppsRepository.getSponsoredFolderSpec(mTargetContext).getApps().size(),
+                info.getContents().size());
+        for (WorkspaceItemInfo child : info.getContents()) {
+            assertEquals(LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT, child.itemType);
+            assertEquals(true, child.isSponsoredApp());
+        }
     }
 
     private void writeLayoutAndLoad(LauncherLayoutBuilder builder) throws Exception {

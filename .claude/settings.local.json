@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote:*)",
+      "Bash(git fetch:*)",
+      "Bash(./gradlew compileDebugJavaWithJavac compileDebugKotlin)",
+      "Bash(./gradlew compileDebugKotlin)",
+      "Bash(adb devices:*)",
+      "Bash(./gradlew installLawnWithQuickstepDebug)",
+      "Bash(./gradlew installLawnWithQuickstepGithubDebug)",
+      "Bash(ls build/outputs/apk/lawnWithQuickstepGithub/debug/*.apk)",
+      "Bash(find build/outputs -name *.apk -path *debug*)",
+      "Bash(adb install:*)",
+      "Bash(adb shell:*)",
+      "Bash(adb pull:*)",
+      "Bash(adb logcat:*)",
+      "Bash(./gradlew assembleLawnWithQuickstepGithubDebug)",
+      "Bash(tr '>' '\\\\n')",
+      "Bash(adb exec-out:*)",
+      "Bash(grep -E \"\\\\.\\(kt|java\\)$\")",
+      "Bash(grep -n \"getSmartspaceMode\\\\|LawnchairSmartspace\\\\|SmartspaceMode\" /Users/li.pi/AndroidStudioProjects/textnow-launcher-lawnchair/lawnchair/src/app/lawnchair/preferences2/*.kt)",
+      "Bash(grep -E \"\\\\.\\(java|kt\\)$\")",
+      "Bash(grep -E \"\\\\.kt$\")",
+      "Bash(grep -n \"class LauncherRootView\\\\|class Workspace\" /Users/li.pi/AndroidStudioProjects/textnow-launcher-lawnchair/src/com/android/launcher3/*.java)",
+      "Bash(ls /Users/li.pi/AndroidStudioProjects/textnow-launcher-lawnchair/build/outputs/apk/lawnWithQuickstepGithubDebug/*.apk)",
+      "mcp__patapim-browser__browser_navigate",
+      "mcp__patapim-browser__browser_screenshot",
+      "mcp__patapim-browser__browser_wait"
+    ]
+  }
+}

@@ -80,6 +80,11 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
     public static final int FLAG_START_FOR_RESULT = 1 << 4;
 
     /**
+     * Indicates that this item is a launcher-owned sponsored app placeholder.
+     */
+    public static final int FLAG_SPONSORED_APP = 1 << 5;
+
+    /**
      * The intent used to start the application.
      */
     @NonNull
@@ -113,6 +118,8 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
         intent = new Intent(info.intent);
         status = info.status;
         personKeys = info.personKeys.clone();
+        options = info.options;
+        disabledMessage = info.disabledMessage;
     }
 
     /** TODO: Remove this. It's only called by ApplicationInfo.makeWorkspaceItem. */
@@ -176,6 +183,10 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
      */
     public boolean hasPromiseIconUi() {
         return isPromise() && !hasStatusFlag(FLAG_SUPPORTS_WEB_UI);
+    }
+
+    public boolean isSponsoredApp() {
+        return (options & FLAG_SPONSORED_APP) != 0;
     }
 
     public void updateFromDeepShortcutInfo(@NonNull final ShortcutInfo shortcutInfo,
